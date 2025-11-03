@@ -77,9 +77,9 @@ go mod tidy
 4. Create a txt file with your input urls, one URL per line
 5. Run program following this format:
 ```console
-go run main.go <input_urls.txt> <output_file_name.ndjson>
+go run main.go <input_urls.txt> <output_file_name.jl>
 ```
-the output file will automatically be created.
+the JSON lines output file will automatically be created.
 6. Read the output file
 
 ## Performance Comparison to Python/Scrapy
