@@ -23,7 +23,7 @@ type Page struct {
 func main() {
 	// expect: go run main.go <input_file> <output_file>
 	if len(os.Args) < 3 {
-		fmt.Println("Usage: go run main.go <urls.txt> <output.ndjson>")
+		fmt.Println("Usage: go run main.go <urls.txt> <output.jl>")
 		os.Exit(1)
 	}
 	inputFile := os.Args[1]
@@ -95,11 +95,17 @@ func main() {
 		}
 
 		// convert the struct into JSON format
-		b, _ := json.Marshal(page)
+		b, err := json.Marshal(page)
+		if err != nil {
+			log.Printf("Error marshaling JSON for %s: %v", page.URL, err)
+			return
+		}
 
 		// write the JSON object as one line to the output file
-		file.Write(b)
-		file.Write([]byte("\n")) // newline between records
+		_, err = file.Write(append(b, '\n'))
+		if err != nil {
+			log.Printf("Error writing to file: %v", err)
+		}
 	})
 
 	// measure runtime
