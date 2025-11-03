@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"regexp"
 	"strings"
 	"time"
 
@@ -63,10 +64,11 @@ func main() {
 		textParts := []string{} // holds each paragraph’s text
 
 		// for each <p> tag inside the content div, extract and clean its text
-		e.ForEach("p", func(_ int, el *colly.HTMLElement) {
+		e.ForEach("h1, h2, h3, h4, h5, h6, p", func(_ int, el *colly.HTMLElement) {
 			t := strings.TrimSpace(el.Text) // remove extra whitespace/newlines
 			if t != "" {                    // skip empty paragraphs
 				textParts = append(textParts, t)
+
 			}
 		})
 
@@ -75,10 +77,20 @@ func main() {
 			return
 		}
 
+		cleanText := strings.Join(textParts, "\n")
+
+		// remove LaTeX-like markup such as \mathcal{...}, \displaystyle, etc.
+		latexPattern := regexp.MustCompile(`\\[a-zA-Z]+(\{[^}]*\})?`)
+		cleanText = latexPattern.ReplaceAllString(cleanText, "")
+
+		// collapse excessive whitespace and newlines
+		spacePattern := regexp.MustCompile(`\s+`)
+		cleanText = spacePattern.ReplaceAllString(cleanText, " ")
+
 		// build a Page
 		page := Page{
 			URL:       e.Request.URL.String(),
-			Text:      strings.Join(textParts, "\n"), // join paragraphs with newlines
+			Text:      cleanText, // join paragraphs with newlines
 			CrawledAt: time.Now(),
 		}
 
