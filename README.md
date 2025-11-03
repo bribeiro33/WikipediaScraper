@@ -25,7 +25,7 @@ Requires Go 1.22 or higher
 wikipedia_crawler/
 ├── main.go                        # Main crawler and scraper logic
 ├── urls.txt                       # Input list of Wikipedia URLs to crawl
-└── wikipedia_output.ndjson        # NDJSON file (output of crawl)     
+└── wikipedia_output.jl            # JSON Lines file (output of crawl)     
 
 ```
 
